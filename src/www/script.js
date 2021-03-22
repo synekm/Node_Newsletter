@@ -1,6 +1,5 @@
 var email;
-var odpovedProZobrazeni;
-var odpoved;
+var odpovedNaPorovnani;
 var funkce;
 var zobrazit;
 
@@ -8,24 +7,24 @@ function prihlasit() {
     funkce = 'prihlasit';
     ziskejEmail();
     posliPost(funkce);
-    //zpravaDleOdpovedi(odpovedProZobrazeni);
-    zobrazitOdpoved(zobrazit);
+    zpravaDleOdpovedi(odpovedNaPorovnani);
+    zobrazitOdpoved();
 }
 
 function odhlasit() {
     funkce = 'odhlasit';
     ziskejEmail();
     posliPost(funkce);
-    //zpravaDleOdpovedi(odpovedProZobrazeni);
-    zobrazitOdpoved(zobrazit);
+    zpravaDleOdpovedi(odpovedNaPorovnani);
+    zobrazitOdpoved();
 }
 
 function ziskejEmail() {
-    email = $('#email').val();
+    email = document.querySelector("#email").value;
 }
 
-function posliPost(funkce) {
-    fetch(`http://localhost:8000/${funkce}`, {
+function posliPost(coDelat) {
+    fetch(`http://localhost:8000/${coDelat}`, {
         method: "POST",
         headers: {
             "Content-type": "application/json"
@@ -33,26 +32,29 @@ function posliPost(funkce) {
         body: JSON.stringify({
             email: email
         })
-    }).then((res) => res.json()).then((data) => {odpoved = data;});
-    console.log(odpoved);
+    })
+    .then(odpoved => odpoved.text())
+    .then(data => {odpovedNaPorovnani = data;console.log(odpovedNaPorovnani)});
 }
 
-function zpravaDleOdpovedi(odpovedProZobrazeni) {
+function zpravaDleOdpovedi(odpovedNaZobrazeni) {
     if (funkce == 'prihlasit') {
-        if (odpovedProZobrazeni == '1') {
+        if (odpovedNaZobrazeni == '1') {
             zobrazit = "<p>E-mail byl přihlášen.</p>";
-        } else {
+        } 
+        if (odpovedNaZobrazeni == '-1') {
             zobrazit = "<p>E-mail již byl přihlášen.</p>";
         }
     } else {
-        if (odpovedProZobrazeni == '2') {
+        if (odpovedNaZobrazeni == '2') {
             zobrazit = "<p>E-mail byl odhlášen.</p>";
-        } else {
+        } 
+        if (odpovedNaZobrazeni == '-2') {
             zobrazit = "<p>E-mail nebyl přihlášen.</p>";
         }
     }
 }
 
-function zobrazitOdpoved(zobrazit) {
-    $("#odpoved").html(odpoved);
+function zobrazitOdpoved() {
+    document.querySelector("#odpoved").innerHTML = zobrazit;
 }
