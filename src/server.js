@@ -13,17 +13,21 @@ server.post('/prihlasit', (dotaz, odpoved) => {
     if (database.get(dotaz.body.email) == undefined) {
         database.set(dotaz.body.email, dotaz.body.email);
         console.log(`Prihlasuji email ${dotaz.body.email}!`)
+        odpoved.send("1");
     } else {
         console.log(`${dotaz.body.email} je jiz prihlasen.`)
+        odpoved.send("-1");
     }
 });
 
 server.post('/odhlasit', (dotaz, odpoved) => {
     if (database.get(dotaz.body.email) == undefined) {
         console.log(`${dotaz.body.email} je jiz odhlasen.`)
+        odpoved.send('-2');
     } else {
         database.delete(dotaz.body.email);
         console.log(`Odhlasuji email ${dotaz.body.email}!`)
+        odpoved.send('2');
     }
 });
 
